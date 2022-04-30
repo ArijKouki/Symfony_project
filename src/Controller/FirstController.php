@@ -23,4 +23,14 @@ class FirstController extends AbstractController
 
 
     }
+
+    #[Route(
+        '/multi/{a<\d+>}/{b<\d+>}',
+        name:'multi'
+    )]
+    public function multi($a,$b):Response
+    {
+        $r=$a * $b;
+        return new Response("<h1>$r </h1>");
+    }
 }

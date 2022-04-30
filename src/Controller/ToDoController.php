@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+#[Route("/toDoListe")]
 class ToDoController extends AbstractController
 {
-    #[Route('/toDoListe', name: 'app_to_do')]
+    #[Route('', name: 'app_to_do')]
     public function indexAction(Request $request): Response
     {
         $session=$request->getSession();
@@ -23,7 +23,7 @@ class ToDoController extends AbstractController
         return $this->render('to_do/listeToDo.html.twig');
     }
 
-    #[Route('/toDoListe/add/{name}/{content}', name: 'to_do.add')]
+    #[Route('/add/{name}/{content?sf6}', name: 'to_do.add' )]
     public function addToDo(Request $request,$name,$content): RedirectResponse{
         $session=$request->getSession();
         if ($session->has('todos')){
@@ -48,7 +48,7 @@ class ToDoController extends AbstractController
 
     }
 
-    #[Route('/toDoListe/update/{name}/{content}', name: 'to_do.update')]
+    #[Route('/update/{name}/{content}', name: 'to_do.update')]
     public function updateToDo(Request $request,$name,$content): RedirectResponse{
         $session=$request->getSession();
         if ($session->has('todos')){
@@ -73,7 +73,7 @@ class ToDoController extends AbstractController
 
     }
 
-    #[Route('/toDoListe/delete/{name}', name: 'to_do.delete')]
+    #[Route('/delete/{name}', name: 'to_do.delete')]
     public function deleteToDo(Request $request,$name): RedirectResponse{
         $session=$request->getSession();
         if ($session->has('todos')){
@@ -97,7 +97,7 @@ class ToDoController extends AbstractController
 
     }
 
-    #[Route('/toDoListe/reset', name: 'to_do.reset')]
+    #[Route('/reset', name: 'to_do.reset')]
     public function resetToDo(Request $request): RedirectResponse{
         $session=$request->getSession();
         $session->remove('todos');
