@@ -2,6 +2,10 @@
 {% block titre%}Users{%endblock%}
 {% block pageTitle%}Users : {%endblock%}
 {%block body%}
+    {{include('/first/fragments/date-jour.html.twig')}}
+    <div class="alert alert-warning">
+        <a href="{{path('app_tab',{n:7})}}">Stats table</a>
+    </div>
 <table class="table">
     <tr class="table-active">
         <td>Nom</td>
