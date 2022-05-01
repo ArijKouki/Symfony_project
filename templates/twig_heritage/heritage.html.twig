@@ -5,13 +5,13 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>sayHello</title>
+    <title>{%block titre%}Titre par défaut {%endblock%}</title>
 </head>
 <body>
-<h1>Hellooooooo {{nom | capitalize}}</h1>
-<h2>Aujourd'hui on est le {{ "now" | date("d/m/Y")}}</h2>
-<img src="{{ "assets/images/" ~ path | defaultImage}}" >
-{#<img src="{{ asset("assets/images") }}" >#}
-<img src="assets/images/img.jpg" >
+header
+<hr>
+{% block content%}  Contenu par défaut {%endblock%}
+<hr>
+footer
 </body>
 </html>

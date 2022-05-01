@@ -33,4 +33,11 @@ class FirstController extends AbstractController
         $r=$a * $b;
         return new Response("<h1>$r </h1>");
     }
+    #[Route('/template', name: 'template')]
+    public function template(): Response
+    {
+
+        return $this->render("template.html.twig");
+
+    }
 }
