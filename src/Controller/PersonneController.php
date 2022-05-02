@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Personne;
+use App\Form\PersonneType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/personne')]
 class PersonneController extends AbstractController
@@ -52,8 +56,8 @@ class PersonneController extends AbstractController
 
 
 
-    #[Route('/add', name: 'personne.add')]
-    public function addPersonne(ManagerRegistry $doctrine): Response
+//    #[Route('/add', name: 'personne.add')]
+    /*public function addPersonne(ManagerRegistry $doctrine): Response
     {
         $entityManager=$doctrine->getManager();
         $personne=new Personne();
@@ -65,7 +69,85 @@ class PersonneController extends AbstractController
         // execute the transaction
         $entityManager->flush();
         return $this->render('personne/detail.html.twig',['personne'=>$personne]);
+    }*/
+
+    #[Route('/add', name: 'personne.add')]
+    public function addPersonne(ManagerRegistry $doctrine,Request $request): Response
+    {
+
+        $personne= new Personne();
+        $form=$this->createForm(PersonneType::class,$personne);
+        $form->remove('createdAt');
+        $form->remove('updatedAt');
+        $form->handleRequest($request);
+        if($form->isSubmitted()){
+            $entityManager=$doctrine->getManager();
+            $entityManager->persist($personne);
+            $entityManager->flush();
+            $this->addFlash('success','Inscription réussie');
+            return $this->redirectToRoute('personne.list');
+        }
+        else{
+            return $this->render('personne/add-form.html.twig',['form'=>$form->createView()]);
+        }
+
     }
+
+    #[Route('/edit/{id?0}', name: 'personne.edit')]
+    public function editPersonne(Personne $personne=null,ManagerRegistry $doctrine,Request $request,SluggerInterface $slugger): Response
+    {
+        $new=False;
+        if(!$personne){
+            $personne= new Personne();
+            $new=True;
+        }
+
+        $form=$this->createForm(PersonneType::class,$personne);
+        $form->remove('createdAt');
+        $form->remove('updatedAt');
+        $form->handleRequest($request);
+        if($form->isSubmitted() ){
+            $entityManager=$doctrine->getManager();
+
+            $img = $form->get('photo')->getData();
+            if ($img) {
+                $originalFilename = pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $img->guessExtension();
+
+                // Move the file to the directory where images are stored
+                try {
+                    $img->move(
+                        $this->getParameter('personnes_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'image' property to store the Image file name
+                // instead of its contents
+                $personne->setImage($newFilename);
+
+            }
+            $entityManager->persist($personne);
+            $entityManager->flush();
+            if($new==True){
+                $message=" a été ajouté avec succés .";
+            }else{
+                $message=" a été edité avec succés .";
+            }
+            $this->addFlash('success',$personne->getNom().$message);
+            return $this->redirectToRoute('personne.list');
+        }
+        else{
+            return $this->render('personne/add-form.html.twig',['form'=>$form->createView()]);
+        }
+
+    }
+
+
 
     #[Route('/delete/{id<\d+>}', name: 'personne.delete')]
     public function deletePersonne(ManagerRegistry $doctrine,$id): RedirectResponse
