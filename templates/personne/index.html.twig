@@ -4,6 +4,27 @@
 {% block pageTitle %}List{% endblock %}
 {% block body %}
     <div class="row">
+     {% if stats is defined and stats %}
+         {%for stat in stats%}
+        <div class="row justify-content-center">
+
+         <div class="card text-white text-center bg-warning mb-3 m-3" style="max-width: 18rem;">
+             <div class="card-header">Age moyenne entre {{ageMin}} et {{ageMax}}</div>
+             <div class="card-body">
+                 <h5 class="card-title">{{ stat.ageMoyenne }}</h5>
+             </div>
+         </div>
+
+         <div class="card text-white text-center bg-warning mb-3 m-3" style="max-width: 18rem;">
+             <div class="card-header">Nombre de personnes entre {{ageMin}} et {{ageMax}}</div>
+             <div class="card-body">
+                 <h5 class="card-title">{{ stat.nbPersonnes }}</h5>
+             </div>
+         </div>
+
+        </div>
+         {%endfor%}
+     {%endif%}
 
         {%for personne in personnes%}
     <div class="card" style="width: 18rem;">

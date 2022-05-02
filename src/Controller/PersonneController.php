@@ -104,4 +104,15 @@ class PersonneController extends AbstractController
     }
 
 
+    #[Route('/age/{min}/{max}', name: 'personne.ageInterval')]
+    public function ageInterval(ManagerRegistry $doctrine,$min,$max):Response
+    {
+        $repository=$doctrine->getRepository(Personne::class);
+        $personnes=$repository->findPersonneByAgeInterval($min,$max);
+        $stats=$repository->findStatsPersonneByAgeInterval($min,$max);
+        return $this->render("personne/index.html.twig",['personnes'=>$personnes,'stats'=>$stats,'ageMin'=>$min,'ageMax'=>$max]);
+
+
+    }
+
 }
